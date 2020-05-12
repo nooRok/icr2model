@@ -290,6 +290,13 @@ class F14(Flavor):
         self.values2.read_stream(st, self.values1[0] * 8)
         assert self.values1[0] * 2 == len(self.values2)
 
+    def to_bytes(self):
+        return super().to_bytes() + b'\xff\xff\xff\xff'
+
+    @property
+    def length(self):
+        return super().length + 4
+
 
 class F15(FixedFlavor):
     TYPE = 15
