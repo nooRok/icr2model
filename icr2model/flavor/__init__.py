@@ -40,9 +40,9 @@ def build_flavor(type_, offset, parent=None, values1=None, values2=None, **_):
     f = _FLAVOR[type_](offset)
     if isinstance(parent, (int, Iterable)):
         p = [parent] if isinstance(parent, int) else parent
-        f.parents.extend(p)
-    f.values1.extend(values1 or [])
-    f.values2.extend(values2 or [])
+        f.parents[:] = p
+    f.values1[:] = values1 or []
+    f.values2[:] = values2 or []
     return f
 
 
