@@ -141,10 +141,10 @@ class VertexFlavor(FixedFlavor):
 
     @vtype.setter
     def vtype(self, vtype):
+        if vtype == 13:
+            vtype = 1
         if vtype in (1, 2) and vtype > self._vtype:
             self._vtype = vtype
-        if vtype == 13:
-            self._vtype = 1
 
     def to_str(self):
         t = 'V{:02}'.format(self.vtype) if self.vtype else 'F00'
