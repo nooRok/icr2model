@@ -14,9 +14,9 @@ class Model:
 
     def read(self):
         with open(self.path, 'rb') as f:
-            self.header.read_stream(f)
+            self.header.read(f)
             st = BytesIO(f.read())
-        self.body.read_stream(st, self.header.root_offset)
+        self.body.read(st, self.header.root_offset)
 
     def sorted(self, optimize=True):
         new_m = Model()

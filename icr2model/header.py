@@ -12,7 +12,7 @@ class Header:
         self.root_offset = root_offset
         self.files = files or {'mip': [], 'pmp': [], '3do': []}
 
-    def read_stream(self, st):
+    def read(self, st):
         self.body_length, self.root_offset = unpack('2l', st.read(8))
         for ext, num_files in zip(EXT, unpack('3l', st.read(12))):
             names = (st.read(8) for _ in range(num_files))

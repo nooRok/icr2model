@@ -61,12 +61,12 @@ class Flavor:
         self.values2 = Values()
 
     def _read_v1(self, st):
-        self.values1.read_stream(st, READ_SIZES[self.type][0])
+        self.values1.read(st, READ_SIZES[self.type][0])
 
     def _read_v2(self, st):
-        self.values2.read_stream(st, READ_SIZES[self.type][1])
+        self.values2.read(st, READ_SIZES[self.type][1])
 
-    def read_stream(self, st):
+    def read(self, st):
         self._read_v1(st)
         self._read_v2(st)
 
@@ -106,7 +106,7 @@ class RefFlavor(Flavor):
 
 class VarFlavor(RefFlavor):
     def _read_v2(self, st):
-        self.values2.read_stream(st, self.values1[-1] * 4)
+        self.values2.read(st, self.values1[-1] * 4)
 
 
 class VertexFlavor(FixedFlavor):
@@ -121,11 +121,11 @@ class VertexFlavor(FixedFlavor):
 
     def _read_v2(self, st):
         if self.vtype == 2:
-            self.values2.read_stream(st, 4)
+            self.values2.read(st, 4)
 
-    def read_stream(self, st):
+    def read(self, st):
         if self.vtype:
-            super().read_stream(st)
+            super().read(st)
 
     @property
     def co(self):
@@ -173,7 +173,7 @@ class V02(VertexFlavor):
 
 class FaceFlavor(RefFlavor):
     def _read_v2(self, st):
-        self.values2.read_stream(st, (self.values1[-1] + 1) * 4)
+        self.values2.read(st, (self.values1[-1] + 1) * 4)
 
     @property
     def color(self):
@@ -287,7 +287,7 @@ class F14(Flavor):
     TYPE = 14
 
     def _read_v2(self, st):
-        self.values2.read_stream(st, self.values1[0] * 8)
+        self.values2.read(st, self.values1[0] * 8)
         assert self.values1[0] * 2 == len(self.values2)
 
     def to_bytes(self):
