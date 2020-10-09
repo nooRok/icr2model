@@ -16,8 +16,8 @@ class ValuesLengthError(Exception):
 class Values(list):
     _TYPECODE = 'l'
 
-    def read(self, st, size):
-        self.extend(array(self._TYPECODE, st.read(size)))
+    def read(self, stream, size):
+        self.extend(array(self._TYPECODE, stream.read(size)))
 
     def to_bytes(self):
         b = pack('{}{}'.format(len(self), self._TYPECODE), *self)

@@ -66,9 +66,9 @@ class Flavor:
     def _read_v2(self, st):
         self.values2.read(st, READ_SIZES[self.type][1])
 
-    def read(self, st):
-        self._read_v1(st)
-        self._read_v2(st)
+    def read(self, stream):
+        self._read_v1(stream)
+        self._read_v2(stream)
 
     def to_bytes(self):
         return (FLAGS[self.type] +
@@ -123,9 +123,9 @@ class VertexFlavor(FixedFlavor):
         if self.vtype == 2:
             self.values2.read(st, 4)
 
-    def read(self, st):
+    def read(self, stream):
         if self.vtype:
-            super().read(st)
+            super().read(stream)
 
     @property
     def co(self):

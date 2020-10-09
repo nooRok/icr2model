@@ -43,12 +43,12 @@ class Body:
             st.seek(f.offset + 4)
             f.read(st)
 
-    def read(self, st, root_offset):
+    def read(self, stream, root_offset):
         with self.flavors:
-            self._read_flavor(st, root_offset)
+            self._read_flavor(stream, root_offset)
             if self.flavors.has_types(12):  # track
-                self._read_lod(st, root_offset)
-        self._read_vertex(st)
+                self._read_lod(stream, root_offset)
+        self._read_vertex(stream)
 
     def to_bytes(self):
         b = b''
