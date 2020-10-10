@@ -81,9 +81,9 @@ class Flavors(dict):
                 yield o, eq_o
 
     def _gen_vtx_redirections(self):
-        vtx_os = self._by_type[0]
-        v01_os = sorted(o for o in vtx_os if self[o].vtype == 1)
-        v02_os = sorted(o for o in vtx_os if self[o].vtype == 2)
+        vtx_os = sorted(self._by_type[0])
+        v01_os = [o for o in vtx_os if self[o].vtype == 1]
+        v02_os = [o for o in vtx_os if self[o].vtype == 2]
         v02_coords = {self[o].co: o for o in v02_os}
         vtx_map = dict(self._gen_redirections(v02_os))
         while v01_os:
