@@ -84,12 +84,12 @@ class Flavors(dict):
         vtx_os = sorted(self._by_type[0])
         v01_os = [o for o in vtx_os if self[o].vtype == 1]
         v02_os = [o for o in vtx_os if self[o].vtype == 2]
-        v02_coords = {self[o].co: o for o in v02_os}
+        v02_co_map = {self[o].co: o for o in v02_os}
         vtx_map = dict(self._gen_redirections(v02_os))
         while v01_os:
             v01_o = v01_os.pop()
             v01_co = self[v01_o].co
-            v02_o = (v02_coords[v01_co] if v01_co in v02_coords else
+            v02_o = (v02_co_map[v01_co] if v01_co in v02_co_map else
                      self._get_eq_flavor(v01_o, v01_os))  # avoid to skip v02 with offset 0
             if v02_o is not None:
                 yield v01_o, vtx_map.get(v02_o, v02_o)
