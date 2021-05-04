@@ -101,7 +101,7 @@ class Flavors(dict):
                 yield from self._gen_vtx_redirections()
             elif t == 11:
                 mgr_os = {self[o].parents[0] for o in self._by_type[17]}  # mgr_os == lod_root_f.children
-                f11_os = (o for o in self._by_type[11] - mgr_os)
+                f11_os = self._by_type[11] - mgr_os
                 yield from self._gen_redirections(f11_os)
             elif t == 17:
                 pass
