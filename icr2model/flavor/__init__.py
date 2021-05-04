@@ -69,8 +69,8 @@ class Flavors(dict):
         return bool(set(t) & set(types))
 
     def _get_eq_flavor(self, offset, offsets):
-        eq_o = (o for o in offsets if self[o] == self[offset])
-        return next(eq_o, None)
+        eq_os = (o for o in offsets if self[o] == self[offset])
+        return next(eq_os, None)
 
     def _gen_redirections(self, offsets):
         os_ = sorted(offsets)
