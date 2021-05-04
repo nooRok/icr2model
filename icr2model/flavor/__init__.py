@@ -58,10 +58,10 @@ class Flavors(dict):
         :return:
         :rtype: dict[int, Flavor]
         """
-        if types:
-            return {o: self[o] for o in
-                    (os_ for t in types for os_ in self._by_type[t])}
-        return dict(self)
+        if self.has_types(*types):
+            offsets = [o for t in types for o in self._by_type[t]]
+            return {o: self[o] for o in offsets}
+        return {}
 
     def has_types(self, *types):
         t = ((k for k, v in self._by_type.items() if v) if self._by_type else
