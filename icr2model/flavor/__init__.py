@@ -118,12 +118,12 @@ class Flavors(dict):
             excls = ({root_f.offset, next_f.offset, lod_root_f.offset, *lod_root_f.children} |
                      self._by_type[0] | self._by_type[17])
             yield from sorted(set(self) - excls)
-            lod_os = {self[o].parents[0]: o for o in self._by_type[17]}
+            lod_os = {self[o].parents[0]: o for o in self._by_type[17]}  # F11: F17
             assert set(lod_root_f.children) == set(lod_os), \
                 [sorted(lod_root_f.children), sorted(lod_os)]
             for mgr_o in lod_root_f.children:
-                yield mgr_o
-                yield lod_os[mgr_o]
+                yield mgr_o  # F11
+                yield lod_os[mgr_o]  # F17
             yield lod_root_f.offset
             if isinstance(root_f, F16):  # icr2
                 yield next_f.offset
