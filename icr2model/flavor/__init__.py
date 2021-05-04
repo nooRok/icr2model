@@ -174,16 +174,13 @@ class Flavors(dict):
     def sort(self, optimize=True):
         new_fs = self.sorted(optimize)
         self.clear()
+        self._by_type.clear()
         self.update(new_fs)
 
     def update(self, __m, **kwargs):
         super().update(__m, **kwargs)
         if isinstance(__m, Flavors):
             self._by_type.update(__m._by_type)
-
-    def clear(self):
-        self._by_type.clear()
-        super().clear()
 
     def __enter__(self):
         return self
