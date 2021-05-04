@@ -44,8 +44,7 @@ class BspValues(Values):
             if len(self) == 3:
                 self.extend([0, 0])
             if len(self) == 4:
-                d = self.pop()
-                self.distance = d
+                self.distance = self.pop()
 
     @property
     def normal(self):
