@@ -109,10 +109,8 @@ class Flavors(dict):
                 yield from self._gen_redirections(self._by_type[t])
 
     def _generate_sorted_offsets(self):  # chg only orders
-        vtx_fs = sorted((self[o] for o in self._by_type[0]),
-                        key=lambda f: (-f.vtype, f.offset))
-        vtx_os = [f.offset for f in vtx_fs]
-        yield from vtx_os
+        vtx_os = self._by_type[0]
+        yield from sorted(vtx_os, key=lambda o: (-self[o].vtype, o))
         if self.has_types(12):  # trk
             root_f = self[max(self)]
             next_f = self[root_f.next_offset]  # type: F11
@@ -134,7 +132,7 @@ class Flavors(dict):
                 assert root_f == next_f
             yield root_f.offset
         else:  # obj/car
-            yield from sorted(o for o in self if o not in vtx_os)
+            yield from sorted(set(self) - vtx_os)
 
     def sorted(self, optimize=True):
         opt_map = dict(self._generate_redirections()) if optimize else {}  # type: dict[int, int]
