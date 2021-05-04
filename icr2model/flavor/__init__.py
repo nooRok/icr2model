@@ -115,10 +115,9 @@ class Flavors(dict):
             root_f = self[max(self)]
             next_f = self[root_f.next_offset]  # type: F11
             lod_root_f = self[next_f.children[0]]  # type: F11
-            excls = {root_f.offset, next_f.offset, lod_root_f.offset}
-            excls.update(
-                set(lod_root_f.children) | self._by_type[0] | self._by_type[17])
-            yield from sorted(o for o in self if o not in excls)
+            excls = ({root_f.offset, next_f.offset, lod_root_f.offset, *lod_root_f.children} |
+                     self._by_type[0] | self._by_type[17])
+            yield from sorted(set(self) - excls)
             lod_os = {self[o].parents[0]: o for o in self._by_type[17]}
             assert set(lod_root_f.children) == set(lod_os), \
                 [sorted(lod_root_f.children), sorted(lod_os)]
