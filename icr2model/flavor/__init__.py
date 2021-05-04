@@ -64,9 +64,9 @@ class Flavors(dict):
         return dict(self)
 
     def has_types(self, *types):
-        fs = ((self._by_type[t] for t in types) if self._by_type else
-              (f for f in self.values() if f.type in types))
-        return bool(next(fs, False))
+        t = ((k for k, v in self._by_type.items() if v) if self._by_type else
+             (f.type for f in self.values()))
+        return bool(set(t) & set(types))
 
     def _get_eq_flavor(self, offset, offsets):
         eq_o = (o for o in offsets if self[o] == self[offset])
