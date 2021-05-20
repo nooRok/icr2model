@@ -28,9 +28,12 @@ def to_int32(value):
     :return: overflowed value (-2147483649=0, 2147483648=0)
     :rtype: int
     """
-    if is_int32(value):
-        return int(value)
-    return to_int32(value / 2)
+    if value <= INT32_MIN:
+        return to_int32(value + (1 << 32))
+    elif INT32_MAX <= value:
+        return to_int32(value - (1 << 32))
+    assert is_int32(value)
+    return int(value)
 
 
 def to_degree(papy_degree):
