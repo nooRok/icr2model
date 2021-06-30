@@ -16,8 +16,8 @@ class ValuesLengthError(Exception):
 class Values(list):
     _TYPECODE = 'l'
 
-    def read_stream(self, st, size):
-        self.extend(array(self._TYPECODE, st.read(size)))
+    def read(self, stream, size):
+        self.extend(array(self._TYPECODE, stream.read(size)))
 
     def to_bytes(self):
         b = pack('{}{}'.format(len(self), self._TYPECODE), *self)
@@ -44,8 +44,7 @@ class BspValues(Values):
             if len(self) == 3:
                 self.extend([0, 0])
             if len(self) == 4:
-                d = self.pop()
-                self.distance = d
+                self.magnitude = self.pop()
 
     @property
     def normal(self):
@@ -58,11 +57,11 @@ class BspValues(Values):
         self[:3] = values
 
     @property
-    def distance(self):
+    def magnitude(self):
         return unpack('q', pack('2l', *self[3:]))[0]
 
-    @distance.setter
-    def distance(self, val):
+    @magnitude.setter
+    def magnitude(self, val):
         """
 
         :param int val:
@@ -79,7 +78,7 @@ class BspValues(Values):
         normal = Vector.cross(va, vb, vc).round()  # value A, B, C
         distance = -Vector.dot(va, normal)  # value D abs?
         bspv = cls(normal)
-        bspv.distance = distance
+        bspv.magnitude = distance
         return bspv
 
 

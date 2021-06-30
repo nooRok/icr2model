@@ -10,12 +10,12 @@ class Header:
     def __init__(self, body_length=0, root_offset=0, **files):
         self.body_length = body_length
         self.root_offset = root_offset
-        self.files = files
+        self.files = files or {'mip': [], 'pmp': [], '3do': []}
 
-    def read_stream(self, st):
-        self.body_length, self.root_offset = unpack('2l', st.read(8))
-        for ext, num_files in zip(EXT, unpack('3l', st.read(12))):
-            names = (st.read(8) for _ in range(num_files))
+    def read(self, stream):
+        self.body_length, self.root_offset = unpack('2l', stream.read(8))
+        for ext, num_files in zip(EXT, unpack('3l', stream.read(12))):
+            names = (stream.read(8) for _ in range(num_files))
             self.files[ext] = [n.strip(NULL).decode() for n in names]
 
     def to_bytes(self):

@@ -40,9 +40,11 @@ def build_flavor(type_, offset, parent=None, values1=None, values2=None, **_):
     f = _FLAVOR[type_](offset)
     if isinstance(parent, (int, Iterable)):
         p = [parent] if isinstance(parent, int) else parent
-        f.parents.extend(p)
-    f.values1.extend(values1 or [])
-    f.values2.extend(values2 or [])
+        f.parents[:] = p
+    if isinstance(f, VertexFlavor):
+        f.vtype = 2 if values2 else 1 if values1 else 0
+    f.values1[:] = values1 or []
+    f.values2[:] = values2 or []
     return f
 
 
@@ -58,19 +60,19 @@ class Flavors(dict):
         :return:
         :rtype: dict[int, Flavor]
         """
-        if types:
-            return {o: self[o] for o in
-                    (os_ for t in types for os_ in self._by_type[t])}
-        return dict(self)
+        if self.has_types(*types):
+            offsets = [o for t in types for o in self._by_type[t]]
+            return {o: self[o] for o in offsets}
+        return {}
 
     def has_types(self, *types):
-        fs = ((self._by_type[t] for t in types) if self._by_type else
-              (f for f in self.values() if f.type in types))
-        return bool(next(fs, False))
+        t = ((k for k, v in self._by_type.items() if v) if self._by_type else
+             (f.type for f in self.values()))
+        return bool(set(t) & set(types))
 
     def _get_eq_flavor(self, offset, offsets):
-        eq_o = (o for o in offsets if self[o] == self[offset])
-        return next(eq_o, None)
+        eq_os = (o for o in offsets if self[o] == self[offset])
+        return next(eq_os, None)
 
     def _gen_redirections(self, offsets):
         os_ = sorted(offsets)
@@ -81,19 +83,19 @@ class Flavors(dict):
                 yield o, eq_o
 
     def _gen_vtx_redirections(self):
-        vtx_os = self._by_type[0]
-        v01_os = sorted(o for o in vtx_os if self[o].vtype == 1)
-        v02_os = sorted(o for o in vtx_os if self[o].vtype == 2)
-        v02_coords = {self[o].co: o for o in v02_os}
-        vtx_map = dict(self._gen_redirections(v02_os))
-        while v01_os:
+        vtx_os = sorted(self._by_type[0])
+        v01_os = [o for o in vtx_os if self[o].vtype == 1]
+        v02_os = [o for o in vtx_os if self[o].vtype == 2]
+        v02_co_map = {self[o].co: o for o in v02_os}
+        vtx_map = dict(self._gen_redirections(v02_os))  # type: dict[int, int]
+        while v01_os:  # v01
             v01_o = v01_os.pop()
             v01_co = self[v01_o].co
-            v02_o = (v02_coords[v01_co] if v01_co in v02_coords else
+            v02_o = (v02_co_map[v01_co] if v01_co in v02_co_map else
                      self._get_eq_flavor(v01_o, v01_os))  # avoid to skip v02 with offset 0
             if v02_o is not None:
                 yield v01_o, vtx_map.get(v02_o, v02_o)
-        yield from vtx_map.items()
+        yield from vtx_map.items()  # v02
 
     def _generate_redirections(self, *types):
         for t in types or range(19):
@@ -101,32 +103,31 @@ class Flavors(dict):
                 yield from self._gen_vtx_redirections()
             elif t == 11:
                 mgr_os = {self[o].parents[0] for o in self._by_type[17]}  # mgr_os == lod_root_f.children
-                f11_os = (o for o in self._by_type[11] - mgr_os)
+                f11_os = self._by_type[11] - mgr_os
                 yield from self._gen_redirections(f11_os)
+            elif t == 12:
+                pass
             elif t == 17:
                 pass
             else:
                 yield from self._gen_redirections(self._by_type[t])
 
     def _generate_sorted_offsets(self):  # chg only orders
-        vtx_fs = sorted((self[o] for o in self._by_type[0]),
-                        key=lambda f: (-f.vtype, f.offset))
-        vtx_os = [f.offset for f in vtx_fs]
-        yield from vtx_os
+        vtx_os = self._by_type[0]
+        yield from sorted(vtx_os, key=lambda o: (-self[o].vtype, o))
         if self.has_types(12):  # trk
             root_f = self[max(self)]
             next_f = self[root_f.next_offset]  # type: F11
             lod_root_f = self[next_f.children[0]]  # type: F11
-            excls = {root_f.offset, next_f.offset, lod_root_f.offset}
-            excls.update(
-                set(lod_root_f.children) | self._by_type[0] | self._by_type[17])
-            yield from sorted(o for o in self if o not in excls)
-            lod_os = {self[o].parents[0]: o for o in self._by_type[17]}
+            excls = ({root_f.offset, next_f.offset, lod_root_f.offset, *lod_root_f.children} |
+                     self._by_type[0] | self._by_type[17])
+            yield from sorted(set(self) - excls)
+            lod_os = {self[o].parents[0]: o for o in self._by_type[17]}  # F11: F17
             assert set(lod_root_f.children) == set(lod_os), \
                 [sorted(lod_root_f.children), sorted(lod_os)]
             for mgr_o in lod_root_f.children:
-                yield mgr_o
-                yield lod_os[mgr_o]
+                yield mgr_o  # F11
+                yield lod_os[mgr_o]  # F17
             yield lod_root_f.offset
             if isinstance(root_f, F16):  # icr2
                 yield next_f.offset
@@ -134,7 +135,7 @@ class Flavors(dict):
                 assert root_f == next_f
             yield root_f.offset
         else:  # obj/car
-            yield from sorted(o for o in self if o not in vtx_os)
+            yield from sorted(set(self) - vtx_os)
 
     def sorted(self, optimize=True):
         opt_map = dict(self._generate_redirections()) if optimize else {}  # type: dict[int, int]
@@ -177,16 +178,9 @@ class Flavors(dict):
     def sort(self, optimize=True):
         new_fs = self.sorted(optimize)
         self.clear()
-        self.update(new_fs)
-
-    def update(self, __m, **kwargs):
-        super().update(__m, **kwargs)
-        if isinstance(__m, Flavors):
-            self._by_type.update(__m._by_type)
-
-    def clear(self):
         self._by_type.clear()
-        super().clear()
+        with self:
+            self.update(new_fs)
 
     def __enter__(self):
         return self

@@ -17,7 +17,7 @@ class Body:
             return
         st.seek(offset)
         f = build_flavor(FLAGS.index(st.read(4)), offset, parent)
-        f.read_stream(st)
+        f.read(st)
         self.flavors[offset] = f
         if isinstance(f, RefFlavor):
             for child in f.children:
@@ -41,14 +41,14 @@ class Body:
             for vtype in set(self.flavors[p].type for p in f.parents):
                 f.vtype = vtype
             st.seek(f.offset + 4)
-            f.read_stream(st)
+            f.read(st)
 
-    def read_stream(self, st, root_offset):
+    def read(self, stream, root_offset):
         with self.flavors:
-            self._read_flavor(st, root_offset)
+            self._read_flavor(stream, root_offset)
             if self.flavors.has_types(12):  # track
-                self._read_lod(st, root_offset)
-        self._read_vertex(st)
+                self._read_lod(stream, root_offset)
+        self._read_vertex(stream)
 
     def to_bytes(self):
         b = b''
