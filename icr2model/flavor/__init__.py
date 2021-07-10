@@ -52,6 +52,7 @@ class Flavors(dict):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._by_type = defaultdict(set)  # type: dict[int, set[int]]  # offsets by type
+        self._cmp_map = {}
 
     def by_types(self, *types):  # make sure to build ._by_type
         """
@@ -71,7 +72,7 @@ class Flavors(dict):
         return bool(set(t) & set(types))
 
     def _get_eq_flavor(self, offset, offsets):
-        eq_os = (o for o in offsets if self[o] == self[offset])
+        eq_os = (o for o in offsets if self._cmp_map[o] == self._cmp_map[offset])
         return next(eq_os, None)
 
     def _gen_redirections(self, offsets):
@@ -179,6 +180,7 @@ class Flavors(dict):
         new_fs = self.sorted(optimize)
         self.clear()
         self._by_type.clear()
+        self._cmp_map.clear()
         with self:
             self.update(new_fs)
 
@@ -186,5 +188,6 @@ class Flavors(dict):
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        for f in self.values():  # type: Flavor
-            self._by_type[f.type].add(f.offset)
+        for o, f in self.items():  # type: int, Flavor
+            self._by_type[f.type].add(o)
+            self._cmp_map[o] = (f.type, tuple(f.values1), tuple(f.values2))
