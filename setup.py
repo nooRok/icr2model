@@ -8,5 +8,6 @@ setup(
     license='MIT',
     author='nooRok',
     author_email='',
-    description='ICR2 3do model'
+    description='ICR2 3do model',
+    python_requires='>=3.5'
 )
