@@ -31,7 +31,7 @@ class Values(list):
 
     @property
     def i(self):
-        warn('Use .values1/2 itself', PendingDeprecationWarning)
+        warn('Use .values1/2 itself', DeprecationWarning)
         return self
 
 

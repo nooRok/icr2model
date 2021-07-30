@@ -58,5 +58,5 @@ class Body:
         return b
 
     def get_flavors(self, *types):
-        warn('Use .flavors.by_types()', PendingDeprecationWarning)
+        warn('Use .flavors.by_types()', DeprecationWarning)
         return self.flavors.by_types(*types)

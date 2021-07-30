@@ -28,5 +28,5 @@ class Header:
         return b
 
     def set_files(self, **files):
-        warn('Use .files', PendingDeprecationWarning)
+        warn('Use .files', DeprecationWarning)
         self.files.update(files)

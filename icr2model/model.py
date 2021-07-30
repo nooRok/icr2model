@@ -58,11 +58,11 @@ class Model:
         return m
 
     def optimized(self):
-        warn('Use .sorted()', PendingDeprecationWarning)
+        warn('Use .sorted()', DeprecationWarning)
         with self.body.flavors:
             pass
         return self.sorted(True)
 
     def get_bytes(self):
-        warn('Use .to_bytes()', PendingDeprecationWarning)
+        warn('Use .to_bytes()', DeprecationWarning)
         return self.to_bytes()
