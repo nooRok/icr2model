@@ -47,7 +47,7 @@ def to_degree(papy_degree):
     return papy_degree / (INT32_MAX / 180.0)
 
 
-def to_papy_degree(degree, ndigits=1):
+def to_papy_angle(degree, ndigits=1):
     """
 
     :param float degree: 0 - 360
@@ -56,3 +56,9 @@ def to_papy_degree(degree, ndigits=1):
     :rtype: int
     """
     return to_int32(round(degree, ndigits) * (INT32_MAX / 180.0))
+
+
+def to_papy_degree(degree, ndigits=1):
+    from warnings import warn
+    warn('Use to_papy_angle()', DeprecationWarning)
+    return to_papy_angle(degree, ndigits)
