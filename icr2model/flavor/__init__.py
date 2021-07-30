@@ -57,8 +57,8 @@ class Flavors(dict):
     def by_types(self, *types):  # make sure to build ._by_type
         """
 
-        :param types:
-        :return:
+        :param types: Flavor type(s) 0-18
+        :return: Dict of flavors filtered by an argument ``types``
         :rtype: dict[int, Flavor]
         """
         if self.has_types(*types):
@@ -67,6 +67,12 @@ class Flavors(dict):
         return {}
 
     def has_types(self, *types):
+        """
+
+        :param types: Flavor type(s) 0-18
+        :return:
+        :rtype: bool
+        """
         t = ((k for k, v in self._by_type.items() if v) if self._by_type else
              (f.type for f in self.values()))
         return bool(set(t) & set(types))
@@ -139,6 +145,14 @@ class Flavors(dict):
             yield from sorted(set(self) - vtx_os)
 
     def sorted(self, optimize=True):
+        """
+
+        :param bool optimize:
+            A flag to merge redundant flavors (they have same values) to single flavor and
+            make their parents refer merged flavor
+        :return: New flavors object
+        :rtype: Flavors
+        """
         opt_map = dict(self._generate_redirections()) if optimize else {}  # type: dict[int, int]
         new_os = {}  # type: dict[int, int]  # org offset: new offset
         new_fs = {}  # type: dict[int, Flavor]
@@ -177,6 +191,11 @@ class Flavors(dict):
             return fs
 
     def sort(self, optimize=True):
+        """
+
+        :param bool optimize: See description of param ``optimize`` of :meth:`icr2model.flavor.Flavors.sorted`
+        :return:
+        """
         new_fs = self.sorted(optimize)
         self.clear()
         self._by_type.clear()

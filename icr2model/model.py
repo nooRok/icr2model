@@ -19,6 +19,12 @@ class Model:
         self.body.read(st, self.header.root_offset)
 
     def sorted(self, optimize=True):
+        """
+
+        :param bool optimize: See description of param ``optimize`` of :meth:`icr2model.flavor.Flavors.sorted`
+        :return: New model object
+        :rtype: Model
+        """
         new_m = Model()
         new_m.body.flavors = self.body.flavors.sorted(optimize)
         root_offset = max(new_m.body.flavors)
@@ -30,6 +36,11 @@ class Model:
         return new_m
 
     def sort(self, optimize=True):
+        """
+
+        :param bool optimize: See description of param ``optimize`` of :meth:`icr2model.flavor.Flavors.sorted`
+        :return:
+        """
         new_m = self.sorted(optimize)
         self.header = new_m.header
         self.body = new_m.body
