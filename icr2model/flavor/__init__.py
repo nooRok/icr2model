@@ -122,7 +122,7 @@ class Flavors(dict):
     def _generate_sorted_offsets(self):  # chg only orders
         vtx_os = self._by_type[0]
         yield from sorted(vtx_os, key=lambda o: (-self[o].vtype, o))
-        if self.has_types(12):  # trk
+        if self.has_types(12) and self.has_types(17):  # trk
             root_f = self[max(self)]
             next_f = self[root_f.next_offset]  # type: F11
             lod_root_f = self[next_f.children[0]]  # type: F11
