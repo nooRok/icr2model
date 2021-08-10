@@ -155,7 +155,7 @@ class VertexFlavor(FixedFlavor):
         return self.values1.length + self.values2.length + 4  # 4 for flag
 
     def set_vtype(self, vtype):
-        warn('Use .vtype', PendingDeprecationWarning)
+        warn('Use .vtype', DeprecationWarning)
         self.vtype = vtype
 
 
@@ -210,7 +210,7 @@ class F04(RefFlavor):
 
     @property
     def mip_index(self):
-        warn('Use .index', PendingDeprecationWarning)
+        warn('Use .index', DeprecationWarning)
         return self.index
 
 
@@ -329,7 +329,7 @@ class F15(FixedFlavor):
 
     @property
     def object_index(self):
-        warn('Use .index', PendingDeprecationWarning)
+        warn('Use .index', DeprecationWarning)
         return self.index
 
 
@@ -358,5 +358,5 @@ class F18(FixedFlavor):
 
     @property
     def pmp_index(self):
-        warn('Use .index', PendingDeprecationWarning)
+        warn('Use .index', DeprecationWarning)
         return self.index
