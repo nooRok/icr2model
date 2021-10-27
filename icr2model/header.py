@@ -23,8 +23,10 @@ class Header:
         b = (pack('2l', *(self.body_length, self.root_offset)) +
              pack('3l', *map(len, files)))
         for names in files:
-            bnames = (n.encode().ljust(8, NULL) for n in names)
-            b += b''.join(bnames)
+            for name in names:
+                if len(name) > 8:
+                    warn('Long filename {} is renamed to {}'.format(name, name[:8]))
+                b += name[:8].encode().ljust(8, NULL)
         return b
 
     def set_files(self, **files):
