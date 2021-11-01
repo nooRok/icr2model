@@ -41,10 +41,10 @@ def build_flavor(type_, offset, parent=None, values1=None, values2=None, **_):
     if isinstance(parent, (int, Iterable)):
         p = [parent] if isinstance(parent, int) else parent
         f.parents[:] = p
+    f.values1[:] = map(int, values1 or [])
+    f.values2[:] = map(int, values2 or [])
     if isinstance(f, VertexFlavor):
-        f.vtype = 2 if values2 else 1 if values1 else 0
-    f.values1[:] = values1 or []
-    f.values2[:] = values2 or []
+        f.vtype = 2 if f.values2 else 1 if f.values1 else 0
     return f
 
 
