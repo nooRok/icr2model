@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='icr2model',
-    version='0.3.4',
+    version='0.3.5',
     packages=find_packages(exclude=['tests']),
     url='https://github.com/nooRok/icr2model',
     license='MIT',
